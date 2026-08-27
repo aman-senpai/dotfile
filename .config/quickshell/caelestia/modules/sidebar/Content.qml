@@ -2,9 +2,9 @@ pragma ComponentBehavior: Bound
 
 import QtQuick
 import QtQuick.Layouts
-import QtQuick.Templates
 import Caelestia
 import Caelestia.Config
+import Caelestia.Services
 import qs.components
 import qs.components.controls
 import qs.components.widgets
@@ -12,15 +12,12 @@ import qs.components.filedialog
 import qs.services
 import qs.utils
 import qs.modules.dashboard.dash as DashWidgets
-import qs.modules.dashboard as DashModules
 
 Item {
     id: root
 
     required property Props props
     required property ScreenState screenState
-
-    property int activeTab: 0
 
     readonly property FileDialog facePicker: FileDialog {
         title: qsTr("Select a profile picture")
@@ -34,242 +31,344 @@ Item {
         }
     }
 
-    ColumnLayout {
-        id: layout
+    Flickable {
+        id: flickable
 
         anchors.fill: parent
-        spacing: Tokens.spacing.medium
+        flickableDirection: Flickable.VerticalFlick
+        contentWidth: width
+        contentHeight: mainCol.implicitHeight
 
-        // 1. Top Header: User Profile & Resource Rings
-        StyledRect {
-            Layout.fillWidth: true
-            implicitHeight: 110
-            radius: Tokens.rounding.large
-            color: Colours.tPalette.m3surfaceContainer
-
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: Tokens.padding.small
-                spacing: Tokens.spacing.small
-
-                Item {
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-
-                    DashWidgets.User {
-                        id: user
-                        screenState: root.screenState
-                        facePicker: root.facePicker
-                    }
-                }
-
-                DashWidgets.Resources {
-                    id: resources
-                    Layout.preferredWidth: resources.implicitWidth
-                    Layout.fillHeight: true
-                }
-            }
+        StyledScrollBar.vertical: StyledScrollBar {
+            flickable: flickable
         }
 
-        // 2. Quick Settings Toggles
-        StyledRect {
-            Layout.fillWidth: true
-            implicitHeight: toggleRow.implicitHeight + Tokens.padding.small * 2
-            radius: Tokens.rounding.large
-            color: Colours.tPalette.m3surfaceContainer
+        ColumnLayout {
+            id: mainCol
 
-            RowLayout {
-                id: toggleRow
-                anchors.centerIn: parent
-                spacing: Tokens.spacing.small
+            width: flickable.width
+            spacing: Tokens.spacing.medium
 
-                IconButton {
-                    icon: "wifi"
-                    isToggle: true
-                    isRound: true
-                    shapeMorph: true
-                    checked: Nmcli.wifiEnabled
-                    onClicked: Nmcli.toggleWifi()
-                }
+            // 1. User Profile & Resource Rings
+            StyledRect {
+                Layout.fillWidth: true
+                implicitHeight: 110
+                radius: Tokens.rounding.large
+                color: Colours.tPalette.m3surfaceContainer
 
-                IconButton {
-                    icon: "bluetooth"
-                    isToggle: true
-                    isRound: true
-                    shapeMorph: true
-                    checked: Bluetooth.defaultAdapter?.enabled ?? false // qmllint disable unresolved-type
-                    onClicked: {
-                        const adapter = Bluetooth.defaultAdapter; // qmllint disable unresolved-type
-                        if (adapter)
-                            adapter.enabled = !adapter.enabled;
+                RowLayout {
+                    anchors.fill: parent
+                    anchors.margins: Tokens.padding.small
+                    spacing: Tokens.spacing.small
+
+                    Item {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+
+                        DashWidgets.User {
+                            id: user
+                            screenState: root.screenState
+                            facePicker: root.facePicker
+                        }
+                    }
+
+                    DashWidgets.Resources {
+                        id: resources
+                        Layout.preferredWidth: resources.implicitWidth
+                        Layout.fillHeight: true
                     }
                 }
+            }
 
-                IconButton {
-                    icon: "mic"
-                    isToggle: true
-                    isRound: true
-                    shapeMorph: true
-                    checked: !Audio.sourceMuted
-                    onClicked: {
-                        const audio = Audio.source?.audio;
-                        if (audio)
-                            audio.muted = !audio.muted;
+            // 2. Quick Settings Toggles
+            StyledRect {
+                Layout.fillWidth: true
+                implicitHeight: toggleRow.implicitHeight + Tokens.padding.small * 2
+                radius: Tokens.rounding.large
+                color: Colours.tPalette.m3surfaceContainer
+
+                RowLayout {
+                    id: toggleRow
+                    anchors.centerIn: parent
+                    spacing: Tokens.spacing.small
+
+                    IconButton {
+                        icon: "wifi"
+                        isToggle: true
+                        isRound: true
+                        shapeMorph: true
+                        checked: Nmcli.wifiEnabled
+                        onClicked: Nmcli.toggleWifi()
+                    }
+
+                    IconButton {
+                        icon: "bluetooth"
+                        isToggle: true
+                        isRound: true
+                        shapeMorph: true
+                        checked: Bluetooth.defaultAdapter?.enabled ?? false // qmllint disable unresolved-type
+                        onClicked: {
+                            const adapter = Bluetooth.defaultAdapter; // qmllint disable unresolved-type
+                            if (adapter)
+                                adapter.enabled = !adapter.enabled;
+                        }
+                    }
+
+                    IconButton {
+                        icon: "mic"
+                        isToggle: true
+                        isRound: true
+                        shapeMorph: true
+                        checked: !Audio.sourceMuted
+                        onClicked: {
+                            const audio = Audio.source?.audio;
+                            if (audio)
+                                audio.muted = !audio.muted;
+                        }
+                    }
+
+                    IconButton {
+                        icon: "notifications_off"
+                        isToggle: true
+                        isRound: true
+                        shapeMorph: true
+                        checked: Notifs.dnd
+                        onClicked: Notifs.dnd = !Notifs.dnd
+                    }
+
+                    IconButton {
+                        icon: "vpn_key"
+                        isToggle: true
+                        isRound: true
+                        shapeMorph: true
+                        checked: VPN.connected
+                        onClicked: VPN.toggle()
                     }
                 }
+            }
 
-                IconButton {
-                    icon: "notifications_off"
-                    isToggle: true
-                    isRound: true
-                    shapeMorph: true
-                    checked: Notifs.dnd
-                    onClicked: Notifs.dnd = !Notifs.dnd
-                }
+            // 3. Live Media Player Card
+            StyledRect {
+                Layout.fillWidth: true
+                implicitHeight: mediaLayout.implicitHeight + Tokens.padding.medium * 2
+                radius: Tokens.rounding.large
+                color: Colours.tPalette.m3surfaceContainer
 
-                IconButton {
-                    icon: "vpn_key"
-                    isToggle: true
-                    isRound: true
-                    shapeMorph: true
-                    checked: VPN.connected
-                    onClicked: VPN.toggle()
+                RowLayout {
+                    id: mediaLayout
+                    anchors.fill: parent
+                    anchors.margins: Tokens.padding.medium
+                    spacing: Tokens.spacing.medium
+
+                    CoverArt {
+                        id: cover
+                        Layout.preferredWidth: 56
+                        Layout.preferredHeight: 56
+                    }
+
+                    ColumnLayout {
+                        Layout.fillWidth: true
+                        spacing: 2
+
+                        StyledText {
+                            text: (Players.active?.trackTitle ?? qsTr("No media playing")) || qsTr("Unknown title")
+                            font: Tokens.font.body.builders.medium.weight(Font.DemiBold).build()
+                            color: Colours.palette.m3primary
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                        }
+
+                        StyledText {
+                            text: (Players.active?.trackArtist ?? "") || (Players.active?.trackAlbum ?? qsTr("Play something to begin"))
+                            font: Tokens.font.body.small
+                            color: Colours.palette.m3onSurfaceVariant
+                            elide: Text.ElideRight
+                            Layout.fillWidth: true
+                        }
+
+                        RowLayout {
+                            spacing: Tokens.spacing.extraSmall
+                            Layout.topMargin: 2
+
+                            IconButton {
+                                type: IconButton.Tonal
+                                icon: "skip_previous"
+                                isRound: true
+                                shapeMorph: true
+                                disabled: !Players.active?.canGoPrevious
+                                onClicked: Players.active?.previous()
+                            }
+
+                            IconButton {
+                                icon: Players.active?.isPlaying ? "pause" : "play_arrow"
+                                isRound: true
+                                shapeMorph: true
+                                checked: Players.active?.isPlaying ?? false
+                                disabled: !Players.active?.canTogglePlaying
+                                onClicked: Players.active?.togglePlaying()
+                            }
+
+                            IconButton {
+                                type: IconButton.Tonal
+                                icon: "skip_next"
+                                isRound: true
+                                shapeMorph: true
+                                disabled: !Players.active?.canGoNext
+                                onClicked: Players.active?.next()
+                            }
+                        }
+                    }
                 }
             }
-        }
 
-        // 3. Tab Switcher (Notifications, Performance, Media)
-        StyledRect {
-            Layout.fillWidth: true
-            implicitHeight: tabRow.implicitHeight + Tokens.padding.extraSmall * 2
-            radius: Tokens.rounding.large
-            color: Colours.tPalette.m3surfaceContainer
+            // 4. Performance Metrics Card (CPU / GPU / Thermals)
+            StyledRect {
+                Layout.fillWidth: true
+                implicitHeight: perfLayout.implicitHeight + Tokens.padding.medium * 2
+                radius: Tokens.rounding.large
+                color: Colours.tPalette.m3surfaceContainer
 
-            RowLayout {
-                id: tabRow
-                anchors.fill: parent
-                anchors.margins: Tokens.padding.extraSmall
-                spacing: Tokens.spacing.extraSmall
-
-                SidebarTabButton {
-                    text: qsTr("Alerts")
-                    iconName: "notifications"
-                    tabIndex: 0
+                ServiceRef {
+                    service: Cpu
                 }
 
-                SidebarTabButton {
-                    text: qsTr("Performance")
-                    iconName: "speed"
-                    tabIndex: 1
+                ServiceRef {
+                    service: Memory
                 }
 
-                SidebarTabButton {
-                    text: qsTr("Media")
-                    iconName: "queue_music"
-                    tabIndex: 2
+                ServiceRef {
+                    service: Storage
+                }
+
+                ColumnLayout {
+                    id: perfLayout
+
+                    anchors.fill: parent
+                    anchors.margins: Tokens.padding.medium
+                    spacing: Tokens.spacing.small
+
+                    RowLayout {
+                        Layout.fillWidth: true
+
+                        StyledText {
+                            text: qsTr("System Performance")
+                            font: Tokens.font.body.builders.medium.weight(Font.DemiBold).build()
+                            color: Colours.palette.m3primary
+                        }
+
+                        Item { Layout.fillWidth: true }
+
+                        MaterialIcon {
+                            text: "speed"
+                            fontStyle: Tokens.font.icon.small
+                            color: Colours.palette.m3secondary
+                        }
+                    }
+
+                    // CPU Metric Row
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Tokens.spacing.small
+
+                        MaterialIcon {
+                            text: "memory"
+                            fontStyle: Tokens.font.icon.small
+                            color: Colours.palette.m3primary
+                        }
+
+                        StyledText {
+                            text: qsTr("CPU: %1%").arg(Math.round((Cpu.percentage ?? 0) * 100))
+                            font: Tokens.font.body.small
+                            color: Colours.palette.m3onSurface
+                            Layout.preferredWidth: 70
+                        }
+
+                        StyledProgressBar {
+                            Layout.fillWidth: true
+                            value: Cpu.percentage ?? 0
+                            implicitHeight: Tokens.padding.extraSmall
+                            fgColour: Colours.palette.m3primary
+                        }
+
+                        StyledText {
+                            text: `${Math.ceil(Cpu.temperature ?? 0)}°C`
+                            font: Tokens.font.body.builders.small.weight(Font.Medium).build()
+                            color: (Cpu.temperature ?? 0) > 85 ? Colours.palette.m3error : Colours.palette.m3onSurfaceVariant
+                        }
+                    }
+
+                    // RAM Metric Row
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Tokens.spacing.small
+
+                        MaterialIcon {
+                            text: "memory_alt"
+                            fontStyle: Tokens.font.icon.small
+                            color: Colours.palette.m3tertiary
+                        }
+
+                        StyledText {
+                            text: qsTr("RAM: %1%").arg(Math.round((Memory.percentage ?? 0) * 100))
+                            font: Tokens.font.body.small
+                            color: Colours.palette.m3onSurface
+                            Layout.preferredWidth: 70
+                        }
+
+                        StyledProgressBar {
+                            Layout.fillWidth: true
+                            value: Memory.percentage ?? 0
+                            implicitHeight: Tokens.padding.extraSmall
+                            fgColour: Colours.palette.m3tertiary
+                        }
+
+                        StyledText {
+                            text: Memory.used ? `${Math.round(Memory.used / 1024 / 1024 / 1024 * 10) / 10}G` : ""
+                            font: Tokens.font.body.builders.small.scale(0.9).build()
+                            color: Colours.palette.m3onSurfaceVariant
+                        }
+                    }
+
+                    // Disk Metric Row
+                    RowLayout {
+                        Layout.fillWidth: true
+                        spacing: Tokens.spacing.small
+
+                        MaterialIcon {
+                            text: "hard_disk"
+                            fontStyle: Tokens.font.icon.small
+                            color: Colours.palette.m3secondary
+                        }
+
+                        StyledText {
+                            text: qsTr("Disk: %1%").arg(Math.round((Storage.percentage ?? 0) * 100))
+                            font: Tokens.font.body.small
+                            color: Colours.palette.m3onSurface
+                            Layout.preferredWidth: 70
+                        }
+
+                        StyledProgressBar {
+                            Layout.fillWidth: true
+                            value: Storage.percentage ?? 0
+                            implicitHeight: Tokens.padding.extraSmall
+                            fgColour: Colours.palette.m3secondary
+                        }
+                    }
                 }
             }
-        }
 
-        // 4. Tab Content Area
-        StyledRect {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-            radius: Tokens.rounding.large
-            color: Colours.tPalette.m3surfaceContainerLow
-            clip: true
+            // 5. Notifications Dock Header & List
+            StyledRect {
+                Layout.fillWidth: true
+                implicitHeight: 300
+                radius: Tokens.rounding.large
+                color: Colours.tPalette.m3surfaceContainerLow
 
-            // Tab 0: Notifications Dock
-            Loader {
-                anchors.fill: parent
-                active: root.activeTab === 0
-                visible: active
-
-                sourceComponent: NotifDock {
+                NotifDock {
                     objectName: "sidebarNotifications"
                     props: root.props
                     screenState: root.screenState
                 }
-            }
-
-            // Tab 1: Performance View (Scrollable)
-            Loader {
-                anchors.fill: parent
-                active: root.activeTab === 1
-                visible: active
-
-                sourceComponent: Flickable {
-                    anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    contentWidth: width
-                    contentHeight: perfContent.implicitHeight
-                    flickableDirection: Flickable.VerticalFlick
-                    clip: true
-
-                    DashModules.Performance {
-                        id: perfContent
-                        width: parent.width
-                    }
-                }
-            }
-
-            // Tab 2: Media Player View
-            Loader {
-                anchors.fill: parent
-                active: root.activeTab === 2
-                visible: active
-
-                sourceComponent: Flickable {
-                    anchors.fill: parent
-                    anchors.margins: Tokens.padding.medium
-                    contentWidth: width
-                    contentHeight: mediaContent.implicitHeight
-                    flickableDirection: Flickable.VerticalFlick
-                    clip: true
-
-                    DashModules.Media {
-                        id: mediaContent
-                        width: parent.width
-                        screenState: root.screenState
-                    }
-                }
-            }
-        }
-    }
-
-    component SidebarTabButton: Item {
-        id: tabBtn
-
-        required property string text
-        required property string iconName
-        required property int tabIndex
-
-        readonly property bool isCurrent: root.activeTab === tabIndex
-
-        Layout.fillWidth: true
-        Layout.preferredWidth: 1
-        implicitHeight: 36
-
-        StateLayer {
-            radius: Tokens.rounding.medium
-            color: tabBtn.isCurrent ? Colours.palette.m3primaryContainer : Colours.palette.m3surfaceContainerHigh
-            onClicked: root.activeTab = tabBtn.tabIndex
-        }
-
-        RowLayout {
-            anchors.centerIn: parent
-            spacing: Tokens.spacing.extraSmall
-
-            MaterialIcon {
-                text: tabBtn.iconName
-                fontStyle: Tokens.font.icon.small
-                color: tabBtn.isCurrent ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
-            }
-
-            StyledText {
-                text: tabBtn.text
-                font: Tokens.font.body.builders.small.weight(tabBtn.isCurrent ? Font.DemiBold : Font.Normal).build()
-                color: tabBtn.isCurrent ? Colours.palette.m3onPrimaryContainer : Colours.palette.m3onSurfaceVariant
             }
         }
     }
