@@ -120,5 +120,41 @@ StyledRect {
                 color: root.colour
             }
         }
+
+        Loader {
+            Layout.alignment: Qt.AlignHCenter
+            asynchronous: true
+            active: true
+            visible: active
+
+            sourceComponent: ColumnLayout {
+                spacing: -2
+
+                StyledRect {
+                    Layout.fillWidth: true
+                    Layout.leftMargin: -Tokens.padding.extraSmall
+                    Layout.rightMargin: -Tokens.padding.extraSmall
+                    Layout.topMargin: 2
+                    Layout.bottomMargin: 2
+                    implicitHeight: 1
+                    color: Colours.palette.m3outlineVariant
+                }
+
+                MaterialIcon {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: Weather.icon
+                    fontStyle: Tokens.font.icon.small
+                    color: Colours.palette.m3secondary
+                    animate: true
+                }
+
+                StyledText {
+                    Layout.alignment: Qt.AlignHCenter
+                    text: Weather.temp.replace("°C", "°").replace("°F", "°")
+                    font: Tokens.font.body.builders.small.scale(0.85).weight(Font.Medium).build()
+                    color: root.colour
+                }
+            }
+        }
     }
 }
