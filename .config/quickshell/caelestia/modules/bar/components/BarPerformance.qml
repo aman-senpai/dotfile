@@ -38,22 +38,22 @@ StyledRect {
 
             CircularProgress {
                 anchors.fill: parent
-                fgColour: (Cpu.temperature ?? 0) > 85 ? Colours.palette.m3error : Colours.palette.m3primary
+                fgColour: (Memory.percentage ?? 0) > 0.85 ? Colours.palette.m3error : Colours.palette.m3tertiary
                 strokeWidth: 2
-                value: Cpu.percentage ?? 0
+                value: Memory.percentage ?? 0
             }
 
             MaterialIcon {
                 anchors.centerIn: parent
-                text: "memory"
+                text: "memory_alt"
                 fontStyle: Tokens.font.icon.small
-                color: (Cpu.temperature ?? 0) > 85 ? Colours.palette.m3error : Colours.palette.m3primary
+                color: (Memory.percentage ?? 0) > 0.85 ? Colours.palette.m3error : Colours.palette.m3tertiary
             }
         }
 
         StyledText {
             Layout.alignment: Qt.AlignHCenter
-            text: `${Math.round((Cpu.percentage ?? 0) * 100)}%`
+            text: `${Math.round((Memory.percentage ?? 0) * 100)}%`
             font: Tokens.font.body.builders.extraSmall.size(9).weight(Font.Bold).build()
             color: Colours.palette.m3onSurfaceVariant
         }
