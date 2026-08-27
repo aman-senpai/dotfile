@@ -76,6 +76,14 @@ ColumnLayout {
             popouts.currentName = "calendar";
             popouts.currentCenter = (ch.item as Item).mapToItem(root, 0, (ch.item as Item).implicitHeight / 2).y ?? 0;
             popouts.hasCurrent = true;
+        } else if (id === "media") {
+            popouts.currentName = "media";
+            popouts.currentCenter = (ch.item as Item).mapToItem(root, 0, (ch.item as Item).implicitHeight / 2).y ?? 0;
+            popouts.hasCurrent = true;
+        } else if (id === "performance") {
+            popouts.currentName = "performance";
+            popouts.currentCenter = (ch.item as Item).mapToItem(root, 0, (ch.item as Item).implicitHeight / 2).y ?? 0;
+            popouts.hasCurrent = true;
         }
     }
 
@@ -164,6 +172,22 @@ ColumnLayout {
                 delegate: EntryWrapper {
                     Clock {
                         objectName: "taskbarClock"
+                    }
+                }
+            }
+            DelegateChoice {
+                roleValue: "media"
+                delegate: EntryWrapper {
+                    BarMedia {
+                        objectName: "taskbarMedia"
+                    }
+                }
+            }
+            DelegateChoice {
+                roleValue: "performance"
+                delegate: EntryWrapper {
+                    BarPerformance {
+                        objectName: "taskbarPerformance"
                     }
                 }
             }
