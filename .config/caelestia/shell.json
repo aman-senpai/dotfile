@@ -1,0 +1,22 @@
+{
+    "appearance": {
+        "font": {
+            "clock": "Rubik",
+            "scale": 1,
+            "workspaces": "Rubik"
+        },
+        "transparency": {
+            "enabled": false
+        }
+    },
+    "enabled": true,
+    "launcher": {
+        "vimKeybinds": false
+    },
+    "lock": {
+        "useWallpaper": true
+    },
+    "paths": {
+        "wallpaperDir": "~/Pictures/Wallpapers"
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "record": {
+        "extraArgs": []
+    },
+    "wallpaper": {
+        "postHook": ""
+    },
+    "theme": {
+        "enableTerm": true,
+        "enableHypr": true,
+        "enableDiscord": false,
+        "enableSpicetify": false,
+        "enablePandora": false,
+        "enableFuzzel": true,
+        "enableBtop": true,
+        "enableNvtop": false,
+        "enableHtop": false,
+        "enableGtk": true,
+        "enableQt": true,
+        "enableWarp": false,
+        "enableChromium": false,
+        "enableZed": false,
+        "enableCava": true,
+        "iconTheme": "Papirus-Dark",
+        "iconThemeLight": "Papirus-Light",
+        "iconThemeDark": "Papirus-Dark",
+        "postHook": ""
+    },
+    "dots": {
+        "url": "https://github.com/caelestia-dots/caelestia.git",
+        "branch": "main"
+    }
+}

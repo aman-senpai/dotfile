@@ -1,0 +1,6 @@
+# Exclude build artifacts and caches
+**/build/
+**/.cache/
+**/__pycache__/
+*.log
+*.tmp
