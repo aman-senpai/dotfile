@@ -15,6 +15,9 @@
             "enabled": false
         }
     },
+    "dashboard": {
+        "enabled": false
+    },
     "enabled": true,
     "launcher": {
         "vimKeybinds": false
