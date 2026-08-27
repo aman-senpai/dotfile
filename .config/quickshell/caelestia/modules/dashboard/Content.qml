@@ -34,12 +34,6 @@ Item {
                 iconName: "speed",
                 text: qsTr("Performance"),
                 enabled: Config.dashboard.showPerformance
-            },
-            {
-                component: weatherComponent,
-                iconName: "cloud",
-                text: qsTr("Weather"),
-                enabled: Config.dashboard.showWeather
             }
         ];
         return allTabs.filter(tab => tab.enabled);
@@ -175,11 +169,6 @@ Item {
                 Performance {}
             }
 
-            Component {
-                id: weatherComponent
-
-                WeatherTab {}
-            }
 
             Behavior on contentX {
                 Anim {}

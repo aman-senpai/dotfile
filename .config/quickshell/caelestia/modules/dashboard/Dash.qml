@@ -28,16 +28,6 @@ RowLayout {
     }
 
     Rect {
-        Layout.preferredWidth: Tokens.sizes.dashboard.weatherWidth
-        Layout.preferredHeight: 120
-        radius: Tokens.rounding.extraLarge * 1.5
-
-        SmallWeather {
-            id: weather
-        }
-    }
-
-    Rect {
         Layout.preferredWidth: resources.implicitWidth
         Layout.preferredHeight: 120
         radius: Tokens.rounding.large
