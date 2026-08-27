@@ -1,0 +1,65 @@
+{
+    "sizes": {
+        "bar": {
+            "innerWidth": 32,
+            "windowPreviewSize": 320,
+            "trayMenuWidth": 240,
+            "batteryWidth": 200,
+            "networkWidth": 256,
+            "kbLayoutWidth": 256
+        },
+        "sidebar": {
+            "width": 340
+        },
+        "dashboard": {
+            "userWidth": 270,
+            "dateTimeWidth": 88,
+            "mediaWidth": 160,
+            "weatherWidth": 220,
+            "logoSize": 24,
+            "uptimeSize": 24,
+            "mediaCoverArtSize": 160,
+            "mediaTabWidth": 800,
+            "mediaTabHeight": 256,
+            "mediaSectionWidth": 240,
+            "perfHeroCardWidth": 320,
+            "perfNetworkCardWidth": 312,
+            "perfNetworkCardHeight": 176,
+            "perfBattWidth": 120,
+            "perfBattWidthSingle": 320,
+            "perfBattHeight": 128,
+            "perfPlaceholderWidth": 560,
+            "perfStorageTextWidth": 128,
+            "perfUsageShapeSize": 80
+        },
+        "nexus": {
+            "minWidth": 640,
+            "minHeight": 400,
+            "maxNavWidth": 480,
+            "maxContentWidth": 640,
+            "popupWidth": 240,
+            "maxDialogWidth": 320,
+            "maxDialogHeight": 480,
+            "textFieldWidth": 200,
+            "networkShowEthDetailWidth": 500,
+            "networkShowVpnDetailWidth": 500
+        },
+        "utilities": {
+            "width": 340,
+            "toastWidth": 340
+        },
+        "notifs": {
+            "width": 340
+        },
+        "launcher": {
+            "itemWidth": 480,
+            "wallpaperWidth": 224,
+            "wallpaperHeight": 160
+        },
+        "lock": {
+            "centerWidth": 480,
+            "largeLogoWidth": 256,
+            "largeFontWidth": 320
+        }
+    }
+}
